@@ -10,8 +10,6 @@ def run_inference():
     data = request.json
     source_image_https = data.get('source_image')
     driving_video_https = data.get('driving_video')
-    if not source_image or not driving_video:
-        return jsonify({"error": "Missing source_image or driving_video parameter"}), 400
 
     # Download the source image and driving video
     source_image = os.path.basename(source_image_https)
@@ -20,6 +18,9 @@ def run_inference():
     driving_video_path = os.path.join('assets/user', driving_video)
     os.system(f'wget -O {source_image_path} {source_image_https}')
     os.system(f'wget -O {driving_video_path} {driving_video_https}')
+
+    if not source_image or not driving_video:
+        return jsonify({"error": "Missing source_image or driving_video parameter"}), 400
 
     # 构建命令
     command = f'python inference.py -s {source_image} -d {driving_video}'
