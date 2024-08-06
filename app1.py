@@ -1,6 +1,8 @@
 from flask import Flask, request, jsonify
 import subprocess
 import os
+import inference
+MODEL = inference.Predictor()
 
 app = Flask(__name__)
 
@@ -31,12 +33,13 @@ def run_inference():
         return jsonify({"error": "Missing source_image or driving_video parameter"}), 400
 
     # 构建命令
-    command = f'python inference.py -s {source_image_path} -d {driving_video_path}'
+    # command = f'python inference.py -s {source_image_path} -d {driving_video_path}'
 
     # 运行命令
     try:
-        subprocess.run(command, check=True, shell=True)
-        return jsonify({"message": "Inference completed successfully"}), 200
+        # subprocess.run(command, check=True, shell=True)
+        output = MODEL.predict(source=source_image_path, driving=driving_video_path)
+        return jsonify({"message": output}), 200
     except subprocess.CalledProcessError as e:
         return jsonify({"error": str(e)}), 500
 
