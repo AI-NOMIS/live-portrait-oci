@@ -4,6 +4,14 @@ import os
 
 app = Flask(__name__)
 
+# Function to download files using wget
+def download_file(url, path):
+    try:
+        result = subprocess.run(['wget', '-O', path, url], check=True, text=True, capture_output=True)
+        print(f'Successfully downloaded {url} to {path}')
+    except subprocess.CalledProcessError as e:
+        print(f'Error downloading {url} to {path}: {e.stderr}')
+
 @app.route('/run-inference', methods=['POST'])
 def run_inference():
     # Get the data in the JSON request
@@ -16,8 +24,8 @@ def run_inference():
     driving_video = os.path.basename(driving_video_https)
     source_image_path = os.path.join('assets/user', source_image)
     driving_video_path = os.path.join('assets/user', driving_video)
-    os.system(f'wget -O {source_image_path} {source_image_https}')
-    os.system(f'wget -O {driving_video_path} {driving_video_https}')
+    download_file(source_image_https, source_image_path)
+    download_file(driving_video_https, driving_video_path)
 
     if not source_image or not driving_video:
         return jsonify({"error": "Missing source_image or driving_video parameter"}), 400
