@@ -9,6 +9,7 @@ torch.backends.cudnn.benchmark = True # disable CUDNN_BACKEND_EXECUTION_PLAN_DES
 
 import cv2; cv2.setNumThreads(0); cv2.ocl.setUseOpenCL(False)
 import numpy as np
+import base64
 import os
 import os.path as osp
 from rich.progress import track
@@ -372,30 +373,30 @@ class LivePortraitPipeline(object):
                 I_p_pstbk_lst.append(I_p_pstbk)
 
         mkdir(args.output_dir)
-        wfp_concat = None
+        # wfp_concat = None
         flag_source_has_audio = flag_is_source_video and has_audio_stream(args.source)
         flag_driving_has_audio = (not flag_load_from_template) and has_audio_stream(args.driving)
 
         ######### build the final concatenation result #########
         # driving frame | source frame | generation, or source frame | generation
-        if flag_is_source_video:
-            frames_concatenated = concat_frames(driving_rgb_crop_256x256_lst, img_crop_256x256_lst, I_p_lst)
-        else:
-            frames_concatenated = concat_frames(driving_rgb_crop_256x256_lst, [img_crop_256x256], I_p_lst)
-        wfp_concat = osp.join(args.output_dir, f'{basename(args.source)}--{basename(args.driving)}_concat.mp4')
+        # if flag_is_source_video:
+        #     frames_concatenated = concat_frames(driving_rgb_crop_256x256_lst, img_crop_256x256_lst, I_p_lst)
+        # else:
+        #     frames_concatenated = concat_frames(driving_rgb_crop_256x256_lst, [img_crop_256x256], I_p_lst)
+        # wfp_concat = osp.join(args.output_dir, f'{basename(args.source)}--{basename(args.driving)}_concat.mp4')
 
         # NOTE: update output fps
         output_fps = source_fps if flag_is_source_video else output_fps
-        images2video(frames_concatenated, wfp=wfp_concat, fps=output_fps)
+        # images2video(frames_concatenated, wfp=wfp_concat, fps=output_fps)
 
-        if flag_source_has_audio or flag_driving_has_audio:
-            # final result with concatenation
-            wfp_concat_with_audio = osp.join(args.output_dir, f'{basename(args.source)}--{basename(args.driving)}_concat_with_audio.mp4')
-            audio_from_which_video = args.driving if ((flag_driving_has_audio and args.audio_priority == 'driving') or (not flag_source_has_audio)) else args.source
-            log(f"Audio is selected from {audio_from_which_video}, concat mode")
-            add_audio_to_video(wfp_concat, audio_from_which_video, wfp_concat_with_audio)
-            os.replace(wfp_concat_with_audio, wfp_concat)
-            log(f"Replace {wfp_concat_with_audio} with {wfp_concat}")
+        # if flag_source_has_audio or flag_driving_has_audio:
+        #     # final result with concatenation
+        #     wfp_concat_with_audio = osp.join(args.output_dir, f'{basename(args.source)}--{basename(args.driving)}_concat_with_audio.mp4')
+        #     audio_from_which_video = args.driving if ((flag_driving_has_audio and args.audio_priority == 'driving') or (not flag_source_has_audio)) else args.source
+        #     log(f"Audio is selected from {audio_from_which_video}, concat mode")
+        #     add_audio_to_video(wfp_concat, audio_from_which_video, wfp_concat_with_audio)
+        #     os.replace(wfp_concat_with_audio, wfp_concat)
+        #     log(f"Replace {wfp_concat_with_audio} with {wfp_concat}")
 
         # save the animated result
         wfp = osp.join(args.output_dir, f'{basename(args.source)}--{basename(args.driving)}.mp4')
@@ -413,10 +414,18 @@ class LivePortraitPipeline(object):
             os.replace(wfp_with_audio, wfp)
             log(f"Replace {wfp_with_audio} with {wfp}")
 
+
         # final log
         if wfp_template not in (None, ''):
             log(f'Animated template: {wfp_template}, you can specify `-d` argument with this template path next time to avoid cropping video, motion making and protecting privacy.', style='bold green')
         log(f'Animated video: {wfp}')
-        log(f'Animated video with concat: {wfp_concat}')
+        # log(f'Animated video with concat: {wfp_concat}')
+        wfp_base64 = ['data:image/png;base64,' + base64.b64encode(open(wfp, 'rb').read()).decode('utf-8')]
 
-        return wfp, wfp_concat
+        # delete the temporary files
+        if osp.exists(wfp_template):
+            os.remove(wfp_template)
+        if osp.exists(wfp):
+            os.remove(wfp)
+        # get wfp in base64
+        return wfp_base64
