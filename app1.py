@@ -31,7 +31,7 @@ def run_inference():
         return jsonify({"error": "Missing source_image or driving_video parameter"}), 400
 
     # 构建命令
-    command = f'python inference.py -s {source_image} -d {driving_video}'
+    command = f'python inference.py -s {source_image_path} -d {driving_video_path}'
 
     # 运行命令
     try:
