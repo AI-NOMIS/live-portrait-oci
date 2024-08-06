@@ -22,8 +22,8 @@ def run_inference():
     # Download the source image and driving video
     source_image = os.path.basename(source_image_https)
     driving_video = os.path.basename(driving_video_https)
-    source_image_path = os.path.join('assets/user', source_image)
-    driving_video_path = os.path.join('assets/user', driving_video)
+    source_image_path = os.path.join('assets/users', source_image)
+    driving_video_path = os.path.join('assets/users', driving_video)
     download_file(source_image_https, source_image_path)
     download_file(driving_video_https, driving_video_path)
 
