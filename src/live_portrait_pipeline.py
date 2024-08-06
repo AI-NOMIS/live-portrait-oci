@@ -423,6 +423,10 @@ class LivePortraitPipeline(object):
         wfp_base64 = ['data:image/png;base64,' + base64.b64encode(open(wfp, 'rb').read()).decode('utf-8')]
 
         # delete the temporary files
+        if osp.exists(args.source):
+            os.remove(args.source)
+        if osp.exists(args.driving):
+            os.remove(args.driving)
         if osp.exists(wfp_template):
             os.remove(wfp_template)
         if osp.exists(wfp):

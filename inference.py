@@ -58,7 +58,8 @@ def main():
     )
 
     # run
-    live_portrait_pipeline.execute(args)
+    result = live_portrait_pipeline.execute(args)
+    print(result)
 
 
 if __name__ == "__main__":
