@@ -45,7 +45,7 @@ def main():
         raise ImportError(
             "FFmpeg is not installed. Please install FFmpeg (including ffmpeg and ffprobe) before running this script. https://ffmpeg.org/download.html"
         )
-
+    print(args)
     fast_check_args(args)
 
     # specify configs for inference

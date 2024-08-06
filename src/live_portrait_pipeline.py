@@ -420,7 +420,7 @@ class LivePortraitPipeline(object):
             log(f'Animated template: {wfp_template}, you can specify `-d` argument with this template path next time to avoid cropping video, motion making and protecting privacy.', style='bold green')
         log(f'Animated video: {wfp}')
         # log(f'Animated video with concat: {wfp_concat}')
-        wfp_base64 = ['data:image/png;base64,' + base64.b64encode(open(wfp, 'rb').read()).decode('utf-8')]
+        wfp_base64 = ['data:video/mp4;base64,' + base64.b64encode(open(wfp, 'rb').read()).decode('utf-8')]
 
         # delete the temporary files
         if osp.exists(args.source):
