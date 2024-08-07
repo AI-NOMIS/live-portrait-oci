@@ -97,7 +97,7 @@ def main():
     print(result)
 
 class Predictor():
-     def predict(source, driving):
+     def predict(self, source, driving):
         # set tyro theme
         tyro.extras.set_accent_color("bright_cyan")
         args = tyro.cli(ArgumentConfig)
