@@ -34,6 +34,7 @@ def run_inference():
 
     # 构建命令
     # command = f'python inference.py -s {source_image_path} -d {driving_video_path}'
+    print(source_image_path, driving_video_path)
 
     # 运行命令
     try:
